@@ -3,11 +3,20 @@ using Kean.Extension;
 using Uri = Kean.Uri;
 using Tcp = Kean.IO.Net.Tcp;
 using Http = Kean.IO.Net.Http;
+using Collection = Kean.Collection;
+using Generic = System.Collections.Generic;
 
 namespace PhoneControl
 {
 	public class Server
 	{
+		Devices devices = new Devices();
+		public Generic.IEnumerator<Device> Devices { get { return this.devices.GetEnumerator(); } }
+		public event Action<Device> DeviceCreated
+		{ 
+			add { this.devices.DeviceCreated += value; } 
+			remove { this.devices.DeviceCreated -= value; }
+		}
 		Uri.Locator clientFolder;
 		Tcp.Server backend;
 		public Server(Uri.Locator clientFolder)
@@ -21,12 +30,10 @@ namespace PhoneControl
 					server.SendFile(this.clientFolder);
 					break;
 				case Http.Method.Post:
-					switch (server.Request.Path)
+					var device = this.devices[server.Request.Path[0]];
+					switch (server.Request.Path[1])
 					{
-						case "/orientation":
-							Orientation orientation = server.Receive<Orientation>();
-							Console.WriteLine(orientation);
-							break;
+						case "orientation": device.Orientation = server.Receive<Orientation>(); break;
 					}
 					break;
 			}

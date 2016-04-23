@@ -92,7 +92,16 @@
 			Your browser does not support Device Orientation and Motion API. Try this sample with iPhone, iPod or iPad with iOS 4.2+.    
 		</div>
 		
-		<script> 
+		<script>
+			function guid() {
+			  function s4() {
+			    return Math.floor((1 + Math.random()) * 0x10000)
+			      .toString(16)
+			      .substring(1);
+			  }
+			  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+			    s4() + '-' + s4() + s4() + s4();
+			}
 			// Position Variables
 			var x = 0;
 			var y = 0;
@@ -118,8 +127,9 @@
 			var alpha = 0;
 			var beta = 0;
 			var gamma = 0;
-			
-			
+			var device = guid()
+			var xhttp = new XMLHttpRequest();
+
 			if (window.DeviceMotionEvent==undefined) {
 				document.getElementById("no").style.display="block";
 				document.getElementById("yes").style.display="none";
@@ -148,11 +158,9 @@
 					alpha = Math.round(event.alpha);
 					beta = Math.round(event.beta);
 					gamma = Math.round(event.gamma);
-					var xhttp = new XMLHttpRequest();
-					xhttp.open("POST", "orientation", true);
+					xhttp.open("POST", device + "/orientation", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
 					var data = '{ "alpha": ' + event.alpha + ', "beta": ' + event.beta + ', "gamma": ' + event.gamma + ' }';
-					//alert(data);
 					xhttp.send(data);
 				}
  
