@@ -1,0 +1,3 @@
+[submodule "source/Kean"]
+	path = source/Kean
+	url = https://github.com/cogneco/Kean
